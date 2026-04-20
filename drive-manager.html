@@ -6,149 +6,188 @@
 <title>Drive Manager</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Nunito+Sans:wght@300;400;600&display=swap');
   :root {
-    --bg:#0f0f0f; --surface:#181818; --surface2:#222; --border:#2a2a2a;
-    --border2:#333; --text:#e8e6e0; --text2:#888884; --text3:#555552;
-    --accent:#c8f04a; --accent-dim:#8aaa2a; --danger:#ff5f57;
-    --radius:8px; --radius-lg:14px;
+    --bg:#F7F8FC;
+    --surface:#FFFFFF;
+    --surface2:#F0F2F8;
+    --border:#E4E8F0;
+    --border2:#CDD3E0;
+    --text:#1A1D2E;
+    --text2:#5C6280;
+    --text3:#9CA3BF;
+    --accent:#5B6EF5;
+    --accent-light:#EEF0FE;
+    --accent-hover:#4A5CE0;
+    --danger:#F5536E;
+    --success:#22C98A;
+    --radius:10px;
+    --radius-lg:16px;
+    --shadow:0 2px 12px rgba(91,110,245,0.08);
+    --shadow-md:0 4px 24px rgba(91,110,245,0.13);
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;}
+  body{background:var(--bg);color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:14px;min-height:100vh;}
   #app{display:flex;height:100vh;overflow:hidden;}
-  #sidebar{width:240px;min-width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;}
-  #main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
-  .sidebar-logo{padding:24px 20px 16px;border-bottom:1px solid var(--border);}
-  .sidebar-logo h1{font-family:'Instrument Serif',serif;font-size:22px;font-weight:400;letter-spacing:-0.3px;}
-  .sidebar-logo span{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
-  .sidebar-section{padding:16px 20px 8px;}
-  .section-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
-  .drive-url-display{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-size:11px;color:var(--text2);word-break:break-all;line-height:1.5;cursor:pointer;transition:border-color .15s;}
-  .drive-url-display:hover{border-color:var(--border2);}
+
+  /* SIDEBAR */
+  #sidebar{width:248px;min-width:248px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;box-shadow:2px 0 12px rgba(0,0,0,0.04);}
+  .sidebar-logo{padding:28px 22px 20px;border-bottom:1px solid var(--border);}
+  .sidebar-logo h1{font-family:'Nunito',sans-serif;font-size:20px;font-weight:700;color:var(--accent);letter-spacing:-0.3px;}
+  .sidebar-logo span{font-size:11px;color:var(--text3);margin-top:2px;display:block;}
+  .sidebar-section{padding:18px 22px 10px;}
+  .section-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+  .drive-url-display{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-size:11px;color:var(--text2);word-break:break-all;line-height:1.5;cursor:pointer;transition:all .15s;}
+  .drive-url-display:hover{border-color:var(--accent);background:#fff;}
   .drive-url-display.empty{color:var(--text3);font-style:italic;border-style:dashed;}
-  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;white-space:nowrap;}
-  .btn:hover{background:var(--surface2);border-color:#444;}
+  .sidebar-bottom{padding:16px 22px;border-top:1px solid var(--border);margin-top:auto;}
+
+  /* BUTTONS */
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .btn:hover{background:var(--surface2);border-color:var(--border2);}
   .btn:active{transform:scale(.98);}
-  .btn-accent{background:var(--accent);color:#0f0f0f;border-color:var(--accent);font-weight:500;}
-  .btn-accent:hover{background:#d8ff55;border-color:#d8ff55;}
-  .btn-sm{padding:6px 10px;font-size:12px;}
+  .btn-accent{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .btn-accent:hover{background:var(--accent-hover);border-color:var(--accent-hover);}
+  .btn-ghost{background:transparent;border-color:transparent;color:var(--text2);}
+  .btn-ghost:hover{background:var(--surface2);border-color:var(--border);}
+  .btn-danger{background:#FFF0F3;color:var(--danger);border-color:#FFCDD5;}
+  .btn-danger:hover{background:#FFE0E6;}
+  .btn-sm{padding:6px 12px;font-size:12px;}
   .btn-full{width:100%;justify-content:center;}
-  .sidebar-nav{padding:8px 12px;flex:1;}
-  .nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius);cursor:pointer;color:var(--text2);font-size:13px;transition:all .15s;margin-bottom:2px;}
-  .nav-item:hover{background:var(--surface2);color:var(--text);}
-  .nav-item.active{background:var(--surface2);color:var(--text);}
-  .sidebar-bottom{padding:16px 20px;border-top:1px solid var(--border);}
-  #header{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--bg);position:sticky;top:0;z-index:10;}
-  #search-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:9px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
-  #search-input:focus{border-color:var(--border2);}
+
+  /* HEADER */
+  #header{padding:18px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--surface);position:sticky;top:0;z-index:10;box-shadow:0 1px 0 var(--border);}
+  #search-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:14px;outline:none;transition:all .15s;}
+  #search-input:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-light);}
   #search-input::placeholder{color:var(--text3);}
   .search-filters{display:flex;gap:6px;}
-  .filter-chip{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
-  .filter-chip:hover{border-color:var(--border2);color:var(--text);}
-  .filter-chip.active{background:var(--surface2);color:var(--text);border-color:var(--border2);}
+  .filter-chip{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Nunito Sans',sans-serif;}
+  .filter-chip:hover{border-color:var(--accent);color:var(--accent);}
+  .filter-chip.active{background:var(--accent-light);color:var(--accent);border-color:var(--accent);}
+
+  /* FILES */
+  #main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
   #files-container{padding:24px 28px;flex:1;}
   .files-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-  .files-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
+  .files-count{font-size:12px;font-weight:600;color:var(--text3);}
   #files-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
-  .file-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:all .2s;position:relative;}
-  .file-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+
+  .file-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);}
+  .file-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--shadow-md);}
   .file-thumb{width:100%;aspect-ratio:3/4;background:var(--surface2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
-  .file-thumb img,.file-thumb canvas{width:100%;height:100%;object-fit:cover;}
+  .file-thumb img{width:100%;height:100%;object-fit:cover;}
   .thumb-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text3);}
-  .thumb-placeholder .ico{font-size:32px;}
-  .thumb-placeholder span{font-size:11px;font-family:'DM Mono',monospace;}
-  .type-badge{position:absolute;top:8px;right:8px;background:rgba(15,15,15,.85);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;}
+  .thumb-placeholder .ico{font-size:36px;}
+  .thumb-placeholder span{font-size:11px;font-weight:600;letter-spacing:.5px;}
+  .type-badge{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.92);border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.5px;}
   .file-info{padding:12px 14px;}
-  .file-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .file-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .file-desc{font-size:11px;color:var(--text3);margin-bottom:8px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.5;}
   .file-tags{display:flex;flex-wrap:wrap;gap:4px;}
-  .tag-pill{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid transparent;}
+  .tag-pill{padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid transparent;}
+
+  /* EMPTY */
   .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;color:var(--text3);text-align:center;grid-column:1/-1;}
-  .empty-state .ico{font-size:48px;margin-bottom:16px;opacity:.4;}
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+  .empty-state .ico{font-size:52px;margin-bottom:16px;opacity:.5;}
+  .empty-state p{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:6px;}
+  .empty-state small{font-size:12px;}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,24,60,0.35);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
   .modal-overlay.hidden{display:none;}
-  .modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:28px;}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:28px;box-shadow:var(--shadow-md);}
   .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
-  .modal-title{font-family:'Instrument Serif',serif;font-size:20px;font-weight:400;}
-  .modal-close{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s;}
-  .modal-close:hover{background:var(--surface2);color:var(--text);}
+  .modal-title{font-family:'Nunito',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+  .modal-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s;}
+  .modal-close:hover{background:var(--border);color:var(--text);}
   .form-group{margin-bottom:18px;}
-  .form-label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-family:'DM Mono',monospace;letter-spacing:.5px;}
-  .form-input,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
-  .form-input:focus,.form-textarea:focus{border-color:var(--border2);}
+  .form-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;letter-spacing:.3px;}
+  .form-input,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 13px;color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:14px;outline:none;transition:all .15s;}
+  .form-input:focus,.form-textarea:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-light);}
   .form-textarea{resize:vertical;min-height:80px;line-height:1.6;}
-  .tag-builder{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;min-height:44px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;cursor:text;}
-  .tag-builder:focus-within{border-color:var(--border2);}
-  .tag-builder-input{background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-width:120px;flex:1;}
+
+  /* TAG BUILDER */
+  .tag-builder{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;min-height:44px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;cursor:text;transition:all .15s;}
+  .tag-builder:focus-within{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-light);}
+  .tag-builder-input{background:transparent;border:none;outline:none;color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:13px;min-width:100px;flex:1;}
   .tag-builder-input::placeholder{color:var(--text3);}
-  .tag-item{display:flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;}
-  .tag-remove{background:none;border:none;color:inherit;cursor:pointer;font-size:14px;line-height:1;opacity:.7;padding:0;}
+  .tag-item{display:flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;}
+  .tag-remove{background:none;border:none;color:inherit;cursor:pointer;font-size:15px;line-height:1;opacity:.6;padding:0;}
   .tag-remove:hover{opacity:1;}
-  .tag-color-row{display:flex;align-items:center;gap:10px;margin-top:8px;}
-  .tag-color-row label{font-size:12px;color:var(--text2);}
-  #tag-color-picker{width:32px;height:32px;border:none;border-radius:6px;cursor:pointer;background:none;padding:0;}
-  .upload-area{border:1.5px dashed var(--border2);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--text3);position:relative;display:flex;flex-direction:column;align-items:center;}
-  .upload-area:hover{border-color:var(--accent-dim);color:var(--text2);}
-  .upload-area.drag-over{border-color:var(--accent);color:var(--text);}
+
+  /* COLOR SWATCHES */
+  .color-swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  .color-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;position:relative;}
+  .color-swatch:hover{transform:scale(1.15);}
+  .color-swatch.selected{border-color:var(--text);}
+
+  /* UPLOAD */
+  .upload-area{border:2px dashed var(--border2);border-radius:var(--radius);padding:28px;text-align:center;cursor:pointer;transition:all .15s;color:var(--text3);position:relative;display:flex;flex-direction:column;align-items:center;background:var(--surface2);}
+  .upload-area:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+  .upload-area.drag-over{border-color:var(--accent);background:var(--accent-light);}
   .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
-  .upload-area .uico{font-size:28px;margin-bottom:8px;}
-  .upload-preview{display:flex;align-items:center;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;}
-  .preview-thumb{width:48px;height:64px;object-fit:cover;border-radius:4px;background:var(--border);flex-shrink:0;}
+  .upload-area .uico{font-size:32px;margin-bottom:10px;}
+  .upload-preview{display:flex;align-items:center;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;}
+  .preview-thumb{width:48px;height:64px;object-fit:cover;border-radius:6px;background:var(--border);flex-shrink:0;}
   .preview-info{flex:1;}
-  .preview-name{font-size:13px;font-weight:500;}
+  .preview-name{font-size:13px;font-weight:700;}
   .preview-size{font-size:11px;color:var(--text3);margin-top:2px;}
-  #auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:20px;}
-  .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;width:100%;max-width:420px;}
-  .auth-card h1{font-family:'Instrument Serif',serif;font-size:28px;font-weight:400;margin-bottom:8px;}
-  .auth-card p{color:var(--text2);font-size:13px;margin-bottom:28px;line-height:1.6;}
-  #status-bar{position:fixed;bottom:20px;right:20px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 16px;font-size:13px;z-index:200;max-width:300px;display:none;}
+
+  /* AUTH */
+  #auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#EEF0FE 0%,#F7F8FC 60%,#FFF0F8 100%);padding:20px;}
+  .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:44px;width:100%;max-width:400px;box-shadow:var(--shadow-md);text-align:center;}
+  .auth-logo{font-size:40px;margin-bottom:16px;}
+  .auth-card h1{font-family:'Nunito',sans-serif;font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px;}
+  .auth-card p{color:var(--text2);font-size:13px;margin-bottom:28px;line-height:1.7;}
+
+  /* STATUS */
+  #status-bar{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;font-size:13px;font-weight:600;z-index:200;max-width:300px;display:none;box-shadow:var(--shadow-md);}
   #status-bar.show{display:block;}
-  #status-bar.error{border-color:var(--danger);color:var(--danger);}
-  #status-bar.success{border-color:var(--accent);color:var(--accent);}
-  .detail-modal{max-width:680px;}
-  .detail-thumb{width:100%;max-height:360px;object-fit:contain;border-radius:var(--radius);background:var(--surface2);margin-bottom:20px;}
+  #status-bar.error{border-color:var(--danger);color:var(--danger);background:#FFF8F9;}
+  #status-bar.success{border-color:var(--success);color:var(--success);background:#F0FDF8;}
+
+  /* DETAIL */
+  .detail-modal{max-width:640px;}
+  .detail-thumb{width:100%;max-height:340px;object-fit:contain;border-radius:var(--radius);background:var(--surface2);margin-bottom:20px;}
   .detail-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
-  .detail-meta-item label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;display:block;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;}
+  .detail-meta-item label{font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;}
   .detail-meta-item span{font-size:13px;color:var(--text2);}
+
   .spinner{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
   @keyframes spin{to{transform:rotate(360deg);}}
   ::-webkit-scrollbar{width:6px;}
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+  ::-webkit-scrollbar-thumb:hover{background:var(--text3);}
 </style>
 </head>
 <body>
 
-<!-- AUTH SCREEN -->
+<!-- AUTH -->
 <div id="auth-screen">
   <div class="auth-card">
+    <div class="auth-logo">📁</div>
     <h1>Drive Manager</h1>
-    <p>Google Drive와 연동하여 PDF, 이미지 파일을 관리합니다.<br>Google 계정으로 로그인하세요.</p>
-    <button class="btn btn-accent btn-full" onclick="initGoogleAuth()">Google로 로그인</button>
+    <p>Google Drive와 연동하여<br>PDF, 이미지 파일을 관리합니다.</p>
+    <button class="btn btn-accent btn-full" style="font-size:15px;padding:12px;" onclick="initGoogleAuth()">Google로 로그인</button>
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- APP -->
 <div id="app" style="display:none;">
   <div id="sidebar">
     <div class="sidebar-logo">
       <h1>Drive Manager</h1>
-      <span>파일 관리</span>
+      <span>파일 관리 시스템</span>
     </div>
     <div class="sidebar-section">
       <div class="section-label">드라이브 폴더</div>
       <div id="drive-url-display" class="drive-url-display empty" onclick="openDriveSettingModal()">폴더 URL을 설정하세요</div>
       <button class="btn btn-sm btn-full" style="margin-top:8px;" onclick="openDriveSettingModal()">✏️ 폴더 변경</button>
     </div>
-    <nav class="sidebar-nav">
-      <div class="section-label" style="padding:0 10px 8px;">보기</div>
-      <div class="nav-item active" onclick="setFilter('all',this)"><span>📁</span> 전체 파일</div>
-      <div class="nav-item" onclick="setFilter('pdf',this)"><span>📄</span> PDF</div>
-      <div class="nav-item" onclick="setFilter('image',this)"><span>🖼️</span> 이미지</div>
-    </nav>
     <div class="sidebar-bottom">
       <button class="btn btn-accent btn-full" onclick="openUploadModal()">+ 파일 업로드</button>
-      <button class="btn btn-full" style="margin-top:8px;color:var(--text3);" onclick="signOut()">로그아웃</button>
+      <button class="btn btn-ghost btn-full btn-sm" style="margin-top:8px;" onclick="signOut()">로그아웃</button>
     </div>
   </div>
 
@@ -182,7 +221,7 @@
       <button class="modal-close" onclick="closeModal('drive-setting-modal')">✕</button>
     </div>
     <div class="form-group">
-      <label class="form-label">GOOGLE DRIVE 폴더 URL</label>
+      <label class="form-label">Google Drive 폴더 URL</label>
       <input id="folder-url-input" class="form-input" placeholder="https://drive.google.com/drive/folders/..." type="text">
       <p style="font-size:11px;color:var(--text3);margin-top:6px;">Google Drive에서 폴더를 열고 주소창의 URL을 복사하세요.</p>
     </div>
@@ -205,8 +244,8 @@
       <div id="upload-area" class="upload-area">
         <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp" onchange="handleFileSelect(event)">
         <div class="uico">📎</div>
-        <p>클릭하거나 파일을 끌어다 놓으세요</p>
-        <small style="font-size:11px;color:var(--text3);margin-top:4px;">PDF, PNG, JPG, GIF, WEBP 지원</small>
+        <p style="font-weight:600;">클릭하거나 파일을 끌어다 놓으세요</p>
+        <small style="font-size:11px;margin-top:4px;">PDF, PNG, JPG, GIF, WEBP 지원</small>
       </div>
       <div id="upload-preview" style="display:none;"></div>
     </div>
@@ -219,16 +258,12 @@
       <textarea id="upload-desc" class="form-textarea" placeholder="파일에 대한 설명을 입력하세요"></textarea>
     </div>
     <div class="form-group">
-      <label class="form-label">해시태그 <span style="color:var(--text3);font-size:11px;">(입력 후 Enter)</span></label>
+      <label class="form-label">해시태그 <span style="color:var(--text3);font-weight:400;">(입력 후 Enter)</span></label>
       <div class="tag-builder" onclick="document.getElementById('tag-input').focus()">
         <span id="tags-display"></span>
         <input id="tag-input" class="tag-builder-input" placeholder="#태그 입력" onkeydown="handleTagInput(event)">
       </div>
-      <div class="tag-color-row">
-        <label>태그 색상:</label>
-        <input type="color" id="tag-color-picker" value="#c8f04a">
-        <span style="font-size:11px;color:var(--text3);">다음 추가할 태그에 적용됩니다</span>
-      </div>
+      <div class="color-swatches" id="upload-swatches"></div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;">
       <button class="btn" onclick="closeModal('upload-modal')">취소</button>
@@ -237,7 +272,38 @@
   </div>
 </div>
 
-<!-- MODAL: FILE DETAIL -->
+<!-- MODAL: EDIT -->
+<div id="edit-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">파일 정보 수정</span>
+      <button class="modal-close" onclick="closeModal('edit-modal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">제목</label>
+      <input id="edit-title" class="form-input" placeholder="파일 제목">
+    </div>
+    <div class="form-group">
+      <label class="form-label">설명</label>
+      <textarea id="edit-desc" class="form-textarea" placeholder="파일에 대한 설명"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">해시태그 <span style="color:var(--text3);font-weight:400;">(입력 후 Enter)</span></label>
+      <div class="tag-builder" onclick="document.getElementById('edit-tag-input').focus()">
+        <span id="edit-tags-display"></span>
+        <input id="edit-tag-input" class="tag-builder-input" placeholder="#태그 입력" onkeydown="handleEditTagInput(event)">
+      </div>
+      <div class="color-swatches" id="edit-swatches"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn btn-danger btn-sm" onclick="deleteFile()" style="margin-right:auto;">🗑 삭제</button>
+      <button class="btn" onclick="closeModal('edit-modal')">취소</button>
+      <button class="btn btn-accent" onclick="saveEdit()" id="edit-btn">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DETAIL -->
 <div id="detail-modal" class="modal-overlay hidden">
   <div class="modal detail-modal">
     <div class="modal-header">
@@ -252,6 +318,7 @@
       <div class="detail-meta-item"><label>업로드 날짜</label><span id="detail-date"></span></div>
     </div>
     <div style="display:flex;gap:8px;margin-top:20px;">
+      <button class="btn" onclick="openEditFromDetail()" style="gap:6px;">✏️ 수정</button>
       <button class="btn" onclick="openFile()" style="flex:1;">↗ Drive에서 열기</button>
       <button class="btn btn-accent" onclick="downloadFile()" style="flex:1;">⬇ 다운로드</button>
     </div>
@@ -264,10 +331,28 @@ const SCOPES = 'https://www.googleapis.com/auth/drive';
 const DB_FILENAME = 'drive-manager-db.json';
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-let tokenClient = null, accessToken = null, folderId = null, dbFileId = null;
-let db = { files: [] };
-let pendingTags = [], selectedFile = null, selectedFileThumbnail = null;
-let currentFilter = 'all', searchFilter = 'all', currentDetailFile = null;
+const TAG_COLORS = [
+  {name:'코랄 핑크', hex:'#FF7F50'},
+  {name:'선샤인 옐로우', hex:'#FFD700'},
+  {name:'에메랄드 그린', hex:'#50C878'},
+  {name:'로얄 블루', hex:'#4169E1'},
+  {name:'바이올렛', hex:'#8A2BE2'},
+  {name:'아쿠아 마린', hex:'#7FFFD4'},
+  {name:'라임 펀치', hex:'#C0FF00'},
+  {name:'스카이 블루', hex:'#87CEEB'},
+  {name:'마젠타', hex:'#FF00FF'},
+  {name:'탠저린', hex:'#FFA500'},
+  {name:'오키드', hex:'#DA70D6'},
+  {name:'민트', hex:'#98FB98'},
+];
+
+let tokenClient=null, accessToken=null, folderId=null, dbFileId=null;
+let db={files:[]};
+let uploadTags=[], editTags=[];
+let selectedUploadColor=TAG_COLORS[0].hex;
+let selectedEditColor=TAG_COLORS[0].hex;
+let selectedFile=null, selectedFileThumbnail=null;
+let searchFilter='all', currentDetailFile=null, editingFileId=null;
 
 // ── STORAGE
 function saveLocal(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -278,18 +363,17 @@ function initGoogleAuth(){
   if(!window.google){
     const s=document.createElement('script');
     s.src='https://accounts.google.com/gsi/client';
-    s.onload=()=>setupAuth(CLIENT_ID);
+    s.onload=()=>setupAuth();
     document.head.appendChild(s);
-  } else { setupAuth(CLIENT_ID); }
+  } else { setupAuth(); }
 }
 
-function setupAuth(clientId){
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: clientId,
-    scope: SCOPES,
-    callback: (resp) => {
+function setupAuth(){
+  tokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:CLIENT_ID, scope:SCOPES,
+    callback:(resp)=>{
       if(resp.error){showStatus('로그인 실패: '+resp.error,'error');return;}
-      accessToken = resp.access_token;
+      accessToken=resp.access_token;
       onAuthSuccess();
     }
   });
@@ -299,9 +383,9 @@ function setupAuth(clientId){
 function onAuthSuccess(){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
-  const saved = loadLocal('folderId');
-  if(saved){ folderId=saved; updateFolderDisplay(); loadFiles(); }
-  else { openDriveSettingModal(); }
+  const saved=loadLocal('folderId');
+  if(saved){folderId=saved;updateFolderDisplay();loadFiles();}
+  else{openDriveSettingModal();}
 }
 
 function signOut(){
@@ -312,14 +396,14 @@ function signOut(){
 
 // ── FOLDER
 function openDriveSettingModal(){
-  document.getElementById('folder-url-input').value = loadLocal('folderUrl')||'';
+  document.getElementById('folder-url-input').value=loadLocal('folderUrl')||'';
   openModal('drive-setting-modal');
 }
 
 function saveDriveSetting(){
-  const url = document.getElementById('folder-url-input').value.trim();
+  const url=document.getElementById('folder-url-input').value.trim();
   if(!url){showStatus('URL을 입력하세요.','error');return;}
-  const match = url.match(/folders\/([a-zA-Z0-9_-]+)/);
+  const match=url.match(/folders\/([a-zA-Z0-9_-]+)/);
   if(!match){showStatus('올바른 Google Drive 폴더 URL이 아닙니다.','error');return;}
   folderId=match[1];
   saveLocal('folderId',folderId);
@@ -333,7 +417,7 @@ function saveDriveSetting(){
 function updateFolderDisplay(){
   const el=document.getElementById('drive-url-display');
   const url=loadLocal('folderUrl');
-  if(url){ el.textContent=url; el.classList.remove('empty'); }
+  if(url){el.textContent=url;el.classList.remove('empty');}
 }
 
 // ── API
@@ -371,17 +455,14 @@ async function loadDb(){
       dbFileId=res.files[0].id;
       const content=await driveApi(`files/${dbFileId}?alt=media`);
       db=content;
-    } else { db={files:[]}; dbFileId=null; }
-  }catch(e){ db={files:[]}; }
+    } else {db={files:[]};dbFileId=null;}
+  }catch(e){db={files:[]};}
 }
 
 async function saveDb(){
   const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
-  if(dbFileId){ await patchDriveFile(dbFileId,blob); }
-  else {
-    const res=await uploadToDrive(DB_FILENAME,'application/json',blob,folderId);
-    dbFileId=res.id;
-  }
+  if(dbFileId){await patchDriveFile(dbFileId,blob);}
+  else{const res=await uploadToDrive(DB_FILENAME,'application/json',blob,folderId);dbFileId=res.id;}
 }
 
 // ── LOAD
@@ -392,7 +473,7 @@ async function loadFiles(){
     await loadDb();
     renderFiles(db.files);
     showStatus(`파일 ${db.files.length}개 로드 완료`,'success');
-  }catch(e){ showStatus('파일 로드 실패: '+e.message,'error'); }
+  }catch(e){showStatus('파일 로드 실패: '+e.message,'error');}
 }
 
 // ── RENDER
@@ -400,13 +481,6 @@ function renderFiles(files){
   const grid=document.getElementById('files-grid');
   const count=document.getElementById('files-count');
   let filtered=[...files];
-
-  if(currentFilter!=='all'){
-    filtered=filtered.filter(f=>currentFilter==='pdf'
-      ?f.mimeType==='application/pdf'
-      :f.mimeType&&f.mimeType.startsWith('image/'));
-  }
-
   const q=document.getElementById('search-input').value.trim().toLowerCase();
   if(q){
     filtered=filtered.filter(f=>{
@@ -419,9 +493,7 @@ function renderFiles(files){
       if(searchFilter==='desc')return inD;
     });
   }
-
   count.textContent=`${filtered.length}개 파일`;
-
   if(filtered.length===0){
     grid.innerHTML=`<div class="empty-state">
       <div class="ico">📂</div>
@@ -430,12 +502,11 @@ function renderFiles(files){
     </div>`;
     return;
   }
-
   grid.innerHTML=filtered.map(f=>{
     const typeLabel=f.mimeType==='application/pdf'?'PDF':(f.mimeType||'').split('/')[1]?.toUpperCase()||'FILE';
     const tags=(f.tags||[]).map(t=>{
-      const bg=t.color||'#c8f04a';
-      return `<span class="tag-pill" style="background:${bg}22;color:${bg};border-color:${bg}44;">#${t.name}</span>`;
+      const bg=t.color||'#5B6EF5';
+      return `<span class="tag-pill" style="background:${bg}22;color:${darken(bg)};border-color:${bg}55;">#${t.name}</span>`;
     }).join('');
     const thumbHtml=f.thumbnailBase64
       ?`<img src="${f.thumbnailBase64}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">`
@@ -454,7 +525,7 @@ function renderFiles(files){
 // ── UPLOAD
 function openUploadModal(){
   if(!folderId){showStatus('먼저 드라이브 폴더를 설정하세요.','error');openDriveSettingModal();return;}
-  selectedFile=null; selectedFileThumbnail=null; pendingTags=[];
+  selectedFile=null;selectedFileThumbnail=null;uploadTags=[];selectedUploadColor=TAG_COLORS[0].hex;
   document.getElementById('upload-title').value='';
   document.getElementById('upload-desc').value='';
   document.getElementById('tag-input').value='';
@@ -462,6 +533,7 @@ function openUploadModal(){
   document.getElementById('upload-area').style.display='flex';
   document.getElementById('upload-preview').style.display='none';
   document.getElementById('file-input').value='';
+  renderSwatches('upload-swatches', TAG_COLORS, selectedUploadColor, (c)=>{selectedUploadColor=c;});
   openModal('upload-modal');
 }
 
@@ -472,7 +544,6 @@ async function handleFileSelect(event){
   document.getElementById('upload-title').value=file.name.replace(/\.[^.]+$/,'');
   const preview=document.getElementById('upload-preview');
   const area=document.getElementById('upload-area');
-
   if(file.type==='application/pdf'){
     showStatus('PDF 썸네일 생성 중...','');
     const thumb=await getPdfThumbnail(file);
@@ -483,8 +554,7 @@ async function handleFileSelect(event){
     const reader=new FileReader();
     reader.onload=(e)=>{
       selectedFileThumbnail=e.target.result;
-      const ext=file.type.split('/')[1].toUpperCase();
-      preview.innerHTML=buildPreviewHtml(e.target.result,file.name,ext,file.size);
+      preview.innerHTML=buildPreviewHtml(e.target.result,file.name,file.type.split('/')[1].toUpperCase(),file.size);
     };
     reader.readAsDataURL(file);
   }
@@ -495,16 +565,13 @@ async function handleFileSelect(event){
 function buildPreviewHtml(src,name,type,size){
   return `<div class="upload-preview">
     <img src="${src}" class="preview-thumb">
-    <div class="preview-info">
-      <div class="preview-name">${escHtml(name)}</div>
-      <div class="preview-size">${type} · ${formatSize(size)}</div>
-    </div>
+    <div class="preview-info"><div class="preview-name">${escHtml(name)}</div><div class="preview-size">${type} · ${formatSize(size)}</div></div>
     <button class="btn btn-sm" onclick="resetFileSelect()">✕</button>
   </div>`;
 }
 
 function resetFileSelect(){
-  selectedFile=null; selectedFileThumbnail=null;
+  selectedFile=null;selectedFileThumbnail=null;
   document.getElementById('upload-area').style.display='flex';
   document.getElementById('upload-preview').style.display='none';
   document.getElementById('file-input').value='';
@@ -518,7 +585,7 @@ async function getPdfThumbnail(file){
   const scale=300/vp0.width;
   const vp=page.getViewport({scale});
   const canvas=document.createElement('canvas');
-  canvas.width=vp.width; canvas.height=vp.height;
+  canvas.width=vp.width;canvas.height=vp.height;
   await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
   return canvas.toDataURL('image/jpeg',0.85);
 }
@@ -529,60 +596,63 @@ async function uploadFile(){
   const title=document.getElementById('upload-title').value.trim()||selectedFile.name;
   const desc=document.getElementById('upload-desc').value.trim();
   const btn=document.getElementById('upload-btn');
-  btn.disabled=true;
-  btn.innerHTML='<span class="spinner"></span> 업로드 중...';
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> 업로드 중...';
   try{
     const uploaded=await uploadToDrive(selectedFile.name,selectedFile.type,selectedFile,folderId);
-    const entry={
+    db.files.unshift({
       id:uploaded.id,name:selectedFile.name,title,description:desc,
-      tags:pendingTags,mimeType:selectedFile.type,
+      tags:uploadTags,mimeType:selectedFile.type,
       thumbnailBase64:selectedFileThumbnail||null,
       uploadedAt:new Date().toISOString()
-    };
-    db.files.unshift(entry);
+    });
     await saveDb();
     closeModal('upload-modal');
     renderFiles(db.files);
     showStatus('업로드 완료!','success');
-  }catch(e){ showStatus('업로드 실패: '+e.message,'error'); }
-  finally{ btn.disabled=false; btn.innerHTML='업로드'; }
+  }catch(e){showStatus('업로드 실패: '+e.message,'error');}
+  finally{btn.disabled=false;btn.innerHTML='업로드';}
 }
 
-// ── TAGS
+// ── TAGS (UPLOAD)
 function handleTagInput(e){
   if(e.key==='Enter'||e.key===','){
     e.preventDefault();
     const val=e.target.value.replace(/^#/,'').trim();
     if(!val)return;
-    const color=document.getElementById('tag-color-picker').value;
-    pendingTags.push({name:val,color});
+    uploadTags.push({name:val,color:selectedUploadColor});
     e.target.value='';
-    renderPendingTags();
+    renderUploadTags();
   }
 }
 
-function renderPendingTags(){
-  document.getElementById('tags-display').innerHTML=pendingTags.map((t,i)=>`
-    <span class="tag-item" style="background:${t.color}22;color:${t.color};border:1px solid ${t.color}44;">
-      #${escHtml(t.name)}<button class="tag-remove" onclick="removeTag(${i})">×</button>
+function renderUploadTags(){
+  document.getElementById('tags-display').innerHTML=uploadTags.map((t,i)=>`
+    <span class="tag-item" style="background:${t.color}22;color:${darken(t.color)};border:1px solid ${t.color}55;">
+      #${escHtml(t.name)}<button class="tag-remove" onclick="removeUploadTag(${i})">×</button>
     </span>`).join('');
 }
 
-function removeTag(i){ pendingTags.splice(i,1); renderPendingTags(); }
+function removeUploadTag(i){uploadTags.splice(i,1);renderUploadTags();}
 
-// ── SEARCH/FILTER
-function handleSearch(){ renderFiles(db.files); }
-function setFilter(type,el){
-  currentFilter=type;
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  el.classList.add('active');
-  renderFiles(db.files);
+// ── SWATCHES
+function renderSwatches(containerId, colors, selectedColor, onSelect){
+  const el=document.getElementById(containerId);
+  el.innerHTML=colors.map(c=>`
+    <div class="color-swatch ${c.hex===selectedColor?'selected':''}"
+      style="background:${c.hex};"
+      title="${c.name}"
+      onclick="selectSwatch('${containerId}','${c.hex}')"></div>
+  `).join('');
+  el._onSelect=onSelect;
 }
-function setSearchFilter(type,el){
-  searchFilter=type;
-  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  renderFiles(db.files);
+
+function selectSwatch(containerId, hex){
+  const el=document.getElementById(containerId);
+  el.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));
+  el.querySelector(`[style*="${hex}"]`).classList.add('selected');
+  if(el._onSelect) el._onSelect(hex);
+  if(containerId==='upload-swatches') selectedUploadColor=hex;
+  if(containerId==='edit-swatches') selectedEditColor=hex;
 }
 
 // ── DETAIL
@@ -595,57 +665,137 @@ function openDetail(fileId){
   document.getElementById('detail-type').textContent=f.mimeType==='application/pdf'?'PDF 문서':'이미지';
   document.getElementById('detail-date').textContent=f.uploadedAt?new Date(f.uploadedAt).toLocaleDateString('ko-KR'):'-';
   const thumb=document.getElementById('detail-thumb');
-  if(f.thumbnailBase64){ thumb.src=f.thumbnailBase64; thumb.style.display='block'; }
-  else { thumb.style.display='none'; }
+  if(f.thumbnailBase64){thumb.src=f.thumbnailBase64;thumb.style.display='block';}
+  else{thumb.style.display='none';}
   document.getElementById('detail-tags').innerHTML=(f.tags||[]).map(t=>{
-    const bg=t.color||'#c8f04a';
-    return `<span class="tag-pill" style="background:${bg}22;color:${bg};border-color:${bg}44;">#${t.name}</span>`;
+    const bg=t.color||'#5B6EF5';
+    return `<span class="tag-pill" style="background:${bg}22;color:${darken(bg)};border-color:${bg}55;">#${t.name}</span>`;
   }).join('');
   openModal('detail-modal');
 }
 
-function openFile(){ if(currentDetailFile) window.open(`https://drive.google.com/file/d/${currentDetailFile.id}/view`,'_blank'); }
-function downloadFile(){ if(currentDetailFile) window.open(`https://drive.google.com/uc?export=download&id=${currentDetailFile.id}`,'_blank'); }
+function openFile(){if(currentDetailFile)window.open(`https://drive.google.com/file/d/${currentDetailFile.id}/view`,'_blank');}
+function downloadFile(){if(currentDetailFile)window.open(`https://drive.google.com/uc?export=download&id=${currentDetailFile.id}`,'_blank');}
+
+// ── EDIT
+function openEditFromDetail(){
+  if(!currentDetailFile)return;
+  closeModal('detail-modal');
+  openEditModal(currentDetailFile.id);
+}
+
+function openEditModal(fileId){
+  const f=db.files.find(f=>f.id===fileId);
+  if(!f)return;
+  editingFileId=fileId;
+  editTags=[...(f.tags||[]).map(t=>({...t}))];
+  selectedEditColor=TAG_COLORS[0].hex;
+  document.getElementById('edit-title').value=f.title||'';
+  document.getElementById('edit-desc').value=f.description||'';
+  document.getElementById('edit-tag-input').value='';
+  renderEditTags();
+  renderSwatches('edit-swatches',TAG_COLORS,selectedEditColor,(c)=>{selectedEditColor=c;});
+  openModal('edit-modal');
+}
+
+function handleEditTagInput(e){
+  if(e.key==='Enter'||e.key===','){
+    e.preventDefault();
+    const val=e.target.value.replace(/^#/,'').trim();
+    if(!val)return;
+    editTags.push({name:val,color:selectedEditColor});
+    e.target.value='';
+    renderEditTags();
+  }
+}
+
+function renderEditTags(){
+  document.getElementById('edit-tags-display').innerHTML=editTags.map((t,i)=>`
+    <span class="tag-item" style="background:${t.color}22;color:${darken(t.color)};border:1px solid ${t.color}55;">
+      #${escHtml(t.name)}<button class="tag-remove" onclick="removeEditTag(${i})">×</button>
+    </span>`).join('');
+}
+
+function removeEditTag(i){editTags.splice(i,1);renderEditTags();}
+
+async function saveEdit(){
+  const btn=document.getElementById('edit-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> 저장 중...';
+  try{
+    const idx=db.files.findIndex(f=>f.id===editingFileId);
+    if(idx===-1)throw new Error('파일을 찾을 수 없습니다.');
+    db.files[idx].title=document.getElementById('edit-title').value.trim()||db.files[idx].name;
+    db.files[idx].description=document.getElementById('edit-desc').value.trim();
+    db.files[idx].tags=editTags;
+    await saveDb();
+    closeModal('edit-modal');
+    renderFiles(db.files);
+    showStatus('저장 완료!','success');
+  }catch(e){showStatus('저장 실패: '+e.message,'error');}
+  finally{btn.disabled=false;btn.innerHTML='저장';}
+}
+
+async function deleteFile(){
+  if(!confirm('정말 삭제하시겠습니까?\n(Drive 파일은 삭제되지 않고 목록에서만 제거됩니다)'))return;
+  try{
+    db.files=db.files.filter(f=>f.id!==editingFileId);
+    await saveDb();
+    closeModal('edit-modal');
+    renderFiles(db.files);
+    showStatus('삭제 완료','success');
+  }catch(e){showStatus('삭제 실패: '+e.message,'error');}
+}
+
+// ── SEARCH
+function handleSearch(){renderFiles(db.files);}
+function setSearchFilter(type,el){
+  searchFilter=type;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderFiles(db.files);
+}
 
 // ── MODAL
-function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
-function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
+function openModal(id){document.getElementById(id).classList.remove('hidden');}
+function closeModal(id){document.getElementById(id).classList.add('hidden');}
 document.querySelectorAll('.modal-overlay').forEach(m=>{
-  m.addEventListener('click',(e)=>{ if(e.target===m) m.classList.add('hidden'); });
+  m.addEventListener('click',(e)=>{if(e.target===m)m.classList.add('hidden');});
 });
 
 // ── STATUS
 let statusTimer;
 function showStatus(msg,type){
   const el=document.getElementById('status-bar');
-  if(!msg){ el.classList.remove('show'); return; }
-  el.textContent=msg;
-  el.className='show '+(type||'');
+  if(!msg){el.classList.remove('show');return;}
+  el.textContent=msg;el.className='show '+(type||'');
   clearTimeout(statusTimer);
-  if(type==='success'||type==='error') statusTimer=setTimeout(()=>el.classList.remove('show'),3000);
+  if(type==='success'||type==='error')statusTimer=setTimeout(()=>el.classList.remove('show'),3000);
 }
 
 // ── UTILS
-function formatSize(b){ if(b<1024)return b+'B'; if(b<1048576)return (b/1024).toFixed(1)+'KB'; return (b/1048576).toFixed(1)+'MB'; }
-function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatSize(b){if(b<1024)return b+'B';if(b<1048576)return (b/1024).toFixed(1)+'KB';return (b/1048576).toFixed(1)+'MB';}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function darken(hex){
+  let r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  r=Math.max(0,r-60);g=Math.max(0,g-60);b=Math.max(0,b-60);
+  return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
 
 // ── INIT
 (function(){
-  // Load GSI script eagerly
   const s=document.createElement('script');
   s.src='https://accounts.google.com/gsi/client';
   document.head.appendChild(s);
 
-  // Drag and drop
   window.addEventListener('DOMContentLoaded',()=>{
     const area=document.getElementById('upload-area');
     if(!area)return;
-    area.addEventListener('dragover',(e)=>{ e.preventDefault(); area.classList.add('drag-over'); });
+    area.addEventListener('dragover',(e)=>{e.preventDefault();area.classList.add('drag-over');});
     area.addEventListener('dragleave',()=>area.classList.remove('drag-over'));
     area.addEventListener('drop',(e)=>{
-      e.preventDefault(); area.classList.remove('drag-over');
+      e.preventDefault();area.classList.remove('drag-over');
       const file=e.dataTransfer.files[0];
-      if(file){ handleFileSelect({target:{files:[file]}}); }
+      if(file)handleFileSelect({target:{files:[file]}});
     });
   });
 })();
