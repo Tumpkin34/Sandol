@@ -123,15 +123,8 @@
 <div id="auth-screen">
   <div class="auth-card">
     <h1>Drive Manager</h1>
-    <p>Google Drive와 연동하여 PDF, 이미지 파일을 관리합니다.<br>OAuth Client ID를 입력하고 Google로 로그인하세요.</p>
-    <div class="form-group">
-      <label class="form-label">OAUTH CLIENT ID</label>
-      <input id="client-id-input" class="form-input" placeholder="xxxxx.apps.googleusercontent.com" type="text">
-    </div>
+    <p>Google Drive와 연동하여 PDF, 이미지 파일을 관리합니다.<br>Google 계정으로 로그인하세요.</p>
     <button class="btn btn-accent btn-full" onclick="initGoogleAuth()">Google로 로그인</button>
-    <p style="margin-top:14px;font-size:11px;color:var(--text3);text-align:center;">
-      Google Cloud Console → 사용자 인증 정보 → OAuth 2.0 클라이언트 ID
-    </p>
   </div>
 </div>
 
@@ -266,6 +259,7 @@
 </div>
 
 <script>
+const CLIENT_ID = '120612497162-cngh7l2vgshlcq3gfogt5k5l0js183f3.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/drive';
 const DB_FILENAME = 'drive-manager-db.json';
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -281,15 +275,12 @@ function loadLocal(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){r
 
 // ── AUTH
 function initGoogleAuth(){
-  const clientId = document.getElementById('client-id-input').value.trim();
-  if(!clientId){showStatus('Client ID를 입력하세요.','error');return;}
-  saveLocal('clientId',clientId);
   if(!window.google){
     const s=document.createElement('script');
     s.src='https://accounts.google.com/gsi/client';
-    s.onload=()=>setupAuth(clientId);
+    s.onload=()=>setupAuth(CLIENT_ID);
     document.head.appendChild(s);
-  } else { setupAuth(clientId); }
+  } else { setupAuth(CLIENT_ID); }
 }
 
 function setupAuth(clientId){
@@ -640,15 +631,10 @@ function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 
 // ── INIT
 (function(){
-  const saved=loadLocal('clientId');
-  if(saved) document.getElementById('client-id-input').value=saved;
-
-  // Load GSI script eagerly if client id exists
-  if(saved){
-    const s=document.createElement('script');
-    s.src='https://accounts.google.com/gsi/client';
-    document.head.appendChild(s);
-  }
+  // Load GSI script eagerly
+  const s=document.createElement('script');
+  s.src='https://accounts.google.com/gsi/client';
+  document.head.appendChild(s);
 
   // Drag and drop
   window.addEventListener('DOMContentLoaded',()=>{
