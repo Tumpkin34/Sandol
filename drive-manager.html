@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drive Manager</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+  :root {
+    --bg:#0f0f0f; --surface:#181818; --surface2:#222; --border:#2a2a2a;
+    --border2:#333; --text:#e8e6e0; --text2:#888884; --text3:#555552;
+    --accent:#c8f04a; --accent-dim:#8aaa2a; --danger:#ff5f57;
+    --radius:8px; --radius-lg:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;}
+  #app{display:flex;height:100vh;overflow:hidden;}
+  #sidebar{width:240px;min-width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;}
+  #main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+  .sidebar-logo{padding:24px 20px 16px;border-bottom:1px solid var(--border);}
+  .sidebar-logo h1{font-family:'Instrument Serif',serif;font-size:22px;font-weight:400;letter-spacing:-0.3px;}
+  .sidebar-logo span{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
+  .sidebar-section{padding:16px 20px 8px;}
+  .section-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+  .drive-url-display{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-size:11px;color:var(--text2);word-break:break-all;line-height:1.5;cursor:pointer;transition:border-color .15s;}
+  .drive-url-display:hover{border-color:var(--border2);}
+  .drive-url-display.empty{color:var(--text3);font-style:italic;border-style:dashed;}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .btn:hover{background:var(--surface2);border-color:#444;}
+  .btn:active{transform:scale(.98);}
+  .btn-accent{background:var(--accent);color:#0f0f0f;border-color:var(--accent);font-weight:500;}
+  .btn-accent:hover{background:#d8ff55;border-color:#d8ff55;}
+  .btn-sm{padding:6px 10px;font-size:12px;}
+  .btn-full{width:100%;justify-content:center;}
+  .sidebar-nav{padding:8px 12px;flex:1;}
+  .nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius);cursor:pointer;color:var(--text2);font-size:13px;transition:all .15s;margin-bottom:2px;}
+  .nav-item:hover{background:var(--surface2);color:var(--text);}
+  .nav-item.active{background:var(--surface2);color:var(--text);}
+  .sidebar-bottom{padding:16px 20px;border-top:1px solid var(--border);}
+  #header{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--bg);position:sticky;top:0;z-index:10;}
+  #search-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:9px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
+  #search-input:focus{border-color:var(--border2);}
+  #search-input::placeholder{color:var(--text3);}
+  .search-filters{display:flex;gap:6px;}
+  .filter-chip{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+  .filter-chip:hover{border-color:var(--border2);color:var(--text);}
+  .filter-chip.active{background:var(--surface2);color:var(--text);border-color:var(--border2);}
+  #files-container{padding:24px 28px;flex:1;}
+  .files-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .files-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
+  #files-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+  .file-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:all .2s;position:relative;}
+  .file-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+  .file-thumb{width:100%;aspect-ratio:3/4;background:var(--surface2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+  .file-thumb img,.file-thumb canvas{width:100%;height:100%;object-fit:cover;}
+  .thumb-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text3);}
+  .thumb-placeholder .ico{font-size:32px;}
+  .thumb-placeholder span{font-size:11px;font-family:'DM Mono',monospace;}
+  .type-badge{position:absolute;top:8px;right:8px;background:rgba(15,15,15,.85);border:1px solid var(--border2);border-radius:4px;padding:2px 6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;}
+  .file-info{padding:12px 14px;}
+  .file-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .file-desc{font-size:11px;color:var(--text3);margin-bottom:8px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.5;}
+  .file-tags{display:flex;flex-wrap:wrap;gap:4px;}
+  .tag-pill{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid transparent;}
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;color:var(--text3);text-align:center;grid-column:1/-1;}
+  .empty-state .ico{font-size:48px;margin-bottom:16px;opacity:.4;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+  .modal-overlay.hidden{display:none;}
+  .modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:28px;}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+  .modal-title{font-family:'Instrument Serif',serif;font-size:20px;font-weight:400;}
+  .modal-close{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s;}
+  .modal-close:hover{background:var(--surface2);color:var(--text);}
+  .form-group{margin-bottom:18px;}
+  .form-label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-family:'DM Mono',monospace;letter-spacing:.5px;}
+  .form-input,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
+  .form-input:focus,.form-textarea:focus{border-color:var(--border2);}
+  .form-textarea{resize:vertical;min-height:80px;line-height:1.6;}
+  .tag-builder{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;min-height:44px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;cursor:text;}
+  .tag-builder:focus-within{border-color:var(--border2);}
+  .tag-builder-input{background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-width:120px;flex:1;}
+  .tag-builder-input::placeholder{color:var(--text3);}
+  .tag-item{display:flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;}
+  .tag-remove{background:none;border:none;color:inherit;cursor:pointer;font-size:14px;line-height:1;opacity:.7;padding:0;}
+  .tag-remove:hover{opacity:1;}
+  .tag-color-row{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .tag-color-row label{font-size:12px;color:var(--text2);}
+  #tag-color-picker{width:32px;height:32px;border:none;border-radius:6px;cursor:pointer;background:none;padding:0;}
+  .upload-area{border:1.5px dashed var(--border2);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--text3);position:relative;display:flex;flex-direction:column;align-items:center;}
+  .upload-area:hover{border-color:var(--accent-dim);color:var(--text2);}
+  .upload-area.drag-over{border-color:var(--accent);color:var(--text);}
+  .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .upload-area .uico{font-size:28px;margin-bottom:8px;}
+  .upload-preview{display:flex;align-items:center;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;}
+  .preview-thumb{width:48px;height:64px;object-fit:cover;border-radius:4px;background:var(--border);flex-shrink:0;}
+  .preview-info{flex:1;}
+  .preview-name{font-size:13px;font-weight:500;}
+  .preview-size{font-size:11px;color:var(--text3);margin-top:2px;}
+  #auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:20px;}
+  .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;width:100%;max-width:420px;}
+  .auth-card h1{font-family:'Instrument Serif',serif;font-size:28px;font-weight:400;margin-bottom:8px;}
+  .auth-card p{color:var(--text2);font-size:13px;margin-bottom:28px;line-height:1.6;}
+  #status-bar{position:fixed;bottom:20px;right:20px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 16px;font-size:13px;z-index:200;max-width:300px;display:none;}
+  #status-bar.show{display:block;}
+  #status-bar.error{border-color:var(--danger);color:var(--danger);}
+  #status-bar.success{border-color:var(--accent);color:var(--accent);}
+  .detail-modal{max-width:680px;}
+  .detail-thumb{width:100%;max-height:360px;object-fit:contain;border-radius:var(--radius);background:var(--surface2);margin-bottom:20px;}
+  .detail-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+  .detail-meta-item label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;display:block;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;}
+  .detail-meta-item span{font-size:13px;color:var(--text2);}
+  .spinner{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  ::-webkit-scrollbar{width:6px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <h1>Drive Manager</h1>
+    <p>Google Drive와 연동하여 PDF, 이미지 파일을 관리합니다.<br>Google 계정으로 로그인하세요.</p>
+    <button class="btn btn-accent btn-full" onclick="initGoogleAuth()">Google로 로그인</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none;">
+  <div id="sidebar">
+    <div class="sidebar-logo">
+      <h1>Drive Manager</h1>
+      <span>파일 관리</span>
+    </div>
+    <div class="sidebar-section">
+      <div class="section-label">드라이브 폴더</div>
+      <div id="drive-url-display" class="drive-url-display empty" onclick="openDriveSettingModal()">폴더 URL을 설정하세요</div>
+      <button class="btn btn-sm btn-full" style="margin-top:8px;" onclick="openDriveSettingModal()">✏️ 폴더 변경</button>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="section-label" style="padding:0 10px 8px;">보기</div>
+      <div class="nav-item active" onclick="setFilter('all',this)"><span>📁</span> 전체 파일</div>
+      <div class="nav-item" onclick="setFilter('pdf',this)"><span>📄</span> PDF</div>
+      <div class="nav-item" onclick="setFilter('image',this)"><span>🖼️</span> 이미지</div>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="btn btn-accent btn-full" onclick="openUploadModal()">+ 파일 업로드</button>
+      <button class="btn btn-full" style="margin-top:8px;color:var(--text3);" onclick="signOut()">로그아웃</button>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="header">
+      <input id="search-input" placeholder="🔍  파일 검색..." oninput="handleSearch()">
+      <div class="search-filters">
+        <button class="filter-chip active" onclick="setSearchFilter('all',this)">전체</button>
+        <button class="filter-chip" onclick="setSearchFilter('title',this)">제목</button>
+        <button class="filter-chip" onclick="setSearchFilter('tag',this)">태그</button>
+        <button class="filter-chip" onclick="setSearchFilter('desc',this)">설명</button>
+      </div>
+    </div>
+    <div id="files-container">
+      <div class="files-header">
+        <span class="files-count" id="files-count">파일 없음</span>
+        <button class="btn btn-sm" onclick="loadFiles()">↻ 새로고침</button>
+      </div>
+      <div id="files-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div id="status-bar"></div>
+
+<!-- MODAL: DRIVE SETTING -->
+<div id="drive-setting-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">드라이브 폴더 설정</span>
+      <button class="modal-close" onclick="closeModal('drive-setting-modal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">GOOGLE DRIVE 폴더 URL</label>
+      <input id="folder-url-input" class="form-input" placeholder="https://drive.google.com/drive/folders/..." type="text">
+      <p style="font-size:11px;color:var(--text3);margin-top:6px;">Google Drive에서 폴더를 열고 주소창의 URL을 복사하세요.</p>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn" onclick="closeModal('drive-setting-modal')">취소</button>
+      <button class="btn btn-accent" onclick="saveDriveSetting()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: UPLOAD -->
+<div id="upload-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">파일 업로드</span>
+      <button class="modal-close" onclick="closeModal('upload-modal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">파일 선택</label>
+      <div id="upload-area" class="upload-area">
+        <input type="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp" onchange="handleFileSelect(event)">
+        <div class="uico">📎</div>
+        <p>클릭하거나 파일을 끌어다 놓으세요</p>
+        <small style="font-size:11px;color:var(--text3);margin-top:4px;">PDF, PNG, JPG, GIF, WEBP 지원</small>
+      </div>
+      <div id="upload-preview" style="display:none;"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">제목</label>
+      <input id="upload-title" class="form-input" placeholder="파일 제목 입력">
+    </div>
+    <div class="form-group">
+      <label class="form-label">설명</label>
+      <textarea id="upload-desc" class="form-textarea" placeholder="파일에 대한 설명을 입력하세요"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">해시태그 <span style="color:var(--text3);font-size:11px;">(입력 후 Enter)</span></label>
+      <div class="tag-builder" onclick="document.getElementById('tag-input').focus()">
+        <span id="tags-display"></span>
+        <input id="tag-input" class="tag-builder-input" placeholder="#태그 입력" onkeydown="handleTagInput(event)">
+      </div>
+      <div class="tag-color-row">
+        <label>태그 색상:</label>
+        <input type="color" id="tag-color-picker" value="#c8f04a">
+        <span style="font-size:11px;color:var(--text3);">다음 추가할 태그에 적용됩니다</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn" onclick="closeModal('upload-modal')">취소</button>
+      <button class="btn btn-accent" onclick="uploadFile()" id="upload-btn">업로드</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: FILE DETAIL -->
+<div id="detail-modal" class="modal-overlay hidden">
+  <div class="modal detail-modal">
+    <div class="modal-header">
+      <span class="modal-title" id="detail-title">파일 상세</span>
+      <button class="modal-close" onclick="closeModal('detail-modal')">✕</button>
+    </div>
+    <img id="detail-thumb" class="detail-thumb" src="" alt="" style="display:none;">
+    <div id="detail-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
+    <p id="detail-desc" style="color:var(--text2);font-size:13px;line-height:1.7;margin-bottom:16px;"></p>
+    <div class="detail-meta">
+      <div class="detail-meta-item"><label>파일 유형</label><span id="detail-type"></span></div>
+      <div class="detail-meta-item"><label>업로드 날짜</label><span id="detail-date"></span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:20px;">
+      <button class="btn" onclick="openFile()" style="flex:1;">↗ Drive에서 열기</button>
+      <button class="btn btn-accent" onclick="downloadFile()" style="flex:1;">⬇ 다운로드</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CLIENT_ID = '120612497162-cngh7l2vgshlcq3gfogt5k5l0js183f3.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/drive';
+const DB_FILENAME = 'drive-manager-db.json';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let tokenClient = null, accessToken = null, folderId = null, dbFileId = null;
+let db = { files: [] };
+let pendingTags = [], selectedFile = null, selectedFileThumbnail = null;
+let currentFilter = 'all', searchFilter = 'all', currentDetailFile = null;
+
+// ── STORAGE
+function saveLocal(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function loadLocal(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}}
+
+// ── AUTH
+function initGoogleAuth(){
+  if(!window.google){
+    const s=document.createElement('script');
+    s.src='https://accounts.google.com/gsi/client';
+    s.onload=()=>setupAuth(CLIENT_ID);
+    document.head.appendChild(s);
+  } else { setupAuth(CLIENT_ID); }
+}
+
+function setupAuth(clientId){
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: clientId,
+    scope: SCOPES,
+    callback: (resp) => {
+      if(resp.error){showStatus('로그인 실패: '+resp.error,'error');return;}
+      accessToken = resp.access_token;
+      onAuthSuccess();
+    }
+  });
+  tokenClient.requestAccessToken();
+}
+
+function onAuthSuccess(){
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  const saved = loadLocal('folderId');
+  if(saved){ folderId=saved; updateFolderDisplay(); loadFiles(); }
+  else { openDriveSettingModal(); }
+}
+
+function signOut(){
+  accessToken=null;
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+}
+
+// ── FOLDER
+function openDriveSettingModal(){
+  document.getElementById('folder-url-input').value = loadLocal('folderUrl')||'';
+  openModal('drive-setting-modal');
+}
+
+function saveDriveSetting(){
+  const url = document.getElementById('folder-url-input').value.trim();
+  if(!url){showStatus('URL을 입력하세요.','error');return;}
+  const match = url.match(/folders\/([a-zA-Z0-9_-]+)/);
+  if(!match){showStatus('올바른 Google Drive 폴더 URL이 아닙니다.','error');return;}
+  folderId=match[1];
+  saveLocal('folderId',folderId);
+  saveLocal('folderUrl',url);
+  updateFolderDisplay();
+  closeModal('drive-setting-modal');
+  dbFileId=null; db={files:[]};
+  loadFiles();
+}
+
+function updateFolderDisplay(){
+  const el=document.getElementById('drive-url-display');
+  const url=loadLocal('folderUrl');
+  if(url){ el.textContent=url; el.classList.remove('empty'); }
+}
+
+// ── API
+async function driveApi(path,opts={}){
+  const url=path.startsWith('http')?path:`https://www.googleapis.com/drive/v3/${path}`;
+  const res=await fetch(url,{...opts,headers:{'Authorization':'Bearer '+accessToken,...(opts.headers||{})}});
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||res.statusText);}
+  return res.json();
+}
+
+async function uploadToDrive(name,mimeType,blob,parentId){
+  const meta=JSON.stringify({name,parents:[parentId]});
+  const form=new FormData();
+  form.append('metadata',new Blob([meta],{type:'application/json'}));
+  form.append('file',blob);
+  const res=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',{
+    method:'POST',headers:{'Authorization':'Bearer '+accessToken},body:form
+  });
+  return res.json();
+}
+
+async function patchDriveFile(fileId,blob){
+  const res=await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,{
+    method:'PATCH',headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'},body:blob
+  });
+  return res.json();
+}
+
+// ── DB
+async function loadDb(){
+  if(!folderId)return;
+  try{
+    const res=await driveApi(`files?q=name='${DB_FILENAME}' and '${folderId}' in parents and trashed=false&fields=files(id)`);
+    if(res.files&&res.files.length>0){
+      dbFileId=res.files[0].id;
+      const content=await driveApi(`files/${dbFileId}?alt=media`);
+      db=content;
+    } else { db={files:[]}; dbFileId=null; }
+  }catch(e){ db={files:[]}; }
+}
+
+async function saveDb(){
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  if(dbFileId){ await patchDriveFile(dbFileId,blob); }
+  else {
+    const res=await uploadToDrive(DB_FILENAME,'application/json',blob,folderId);
+    dbFileId=res.id;
+  }
+}
+
+// ── LOAD
+async function loadFiles(){
+  if(!folderId)return;
+  showStatus('파일 목록 불러오는 중...','');
+  try{
+    await loadDb();
+    renderFiles(db.files);
+    showStatus(`파일 ${db.files.length}개 로드 완료`,'success');
+  }catch(e){ showStatus('파일 로드 실패: '+e.message,'error'); }
+}
+
+// ── RENDER
+function renderFiles(files){
+  const grid=document.getElementById('files-grid');
+  const count=document.getElementById('files-count');
+  let filtered=[...files];
+
+  if(currentFilter!=='all'){
+    filtered=filtered.filter(f=>currentFilter==='pdf'
+      ?f.mimeType==='application/pdf'
+      :f.mimeType&&f.mimeType.startsWith('image/'));
+  }
+
+  const q=document.getElementById('search-input').value.trim().toLowerCase();
+  if(q){
+    filtered=filtered.filter(f=>{
+      const inT=f.title&&f.title.toLowerCase().includes(q);
+      const inD=f.description&&f.description.toLowerCase().includes(q);
+      const inG=f.tags&&f.tags.some(t=>t.name.toLowerCase().includes(q));
+      if(searchFilter==='all')return inT||inD||inG;
+      if(searchFilter==='title')return inT;
+      if(searchFilter==='tag')return inG;
+      if(searchFilter==='desc')return inD;
+    });
+  }
+
+  count.textContent=`${filtered.length}개 파일`;
+
+  if(filtered.length===0){
+    grid.innerHTML=`<div class="empty-state">
+      <div class="ico">📂</div>
+      <p>${q?'검색 결과가 없습니다':'파일이 없습니다'}</p>
+      <small>${q?'다른 검색어를 입력해 보세요':'파일을 업로드하거나 드라이브 폴더를 확인하세요'}</small>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML=filtered.map(f=>{
+    const typeLabel=f.mimeType==='application/pdf'?'PDF':(f.mimeType||'').split('/')[1]?.toUpperCase()||'FILE';
+    const tags=(f.tags||[]).map(t=>{
+      const bg=t.color||'#c8f04a';
+      return `<span class="tag-pill" style="background:${bg}22;color:${bg};border-color:${bg}44;">#${t.name}</span>`;
+    }).join('');
+    const thumbHtml=f.thumbnailBase64
+      ?`<img src="${f.thumbnailBase64}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">`
+      :`<div class="thumb-placeholder"><div class="ico">${f.mimeType==='application/pdf'?'📄':'🖼️'}</div><span>${typeLabel}</span></div>`;
+    return `<div class="file-card" onclick="openDetail('${f.id}')">
+      <div class="file-thumb">${thumbHtml}<div class="type-badge">${typeLabel}</div></div>
+      <div class="file-info">
+        <div class="file-title">${escHtml(f.title||f.name||'제목 없음')}</div>
+        ${f.description?`<div class="file-desc">${escHtml(f.description)}</div>`:''}
+        <div class="file-tags">${tags}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── UPLOAD
+function openUploadModal(){
+  if(!folderId){showStatus('먼저 드라이브 폴더를 설정하세요.','error');openDriveSettingModal();return;}
+  selectedFile=null; selectedFileThumbnail=null; pendingTags=[];
+  document.getElementById('upload-title').value='';
+  document.getElementById('upload-desc').value='';
+  document.getElementById('tag-input').value='';
+  document.getElementById('tags-display').innerHTML='';
+  document.getElementById('upload-area').style.display='flex';
+  document.getElementById('upload-preview').style.display='none';
+  document.getElementById('file-input').value='';
+  openModal('upload-modal');
+}
+
+async function handleFileSelect(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  selectedFile=file;
+  document.getElementById('upload-title').value=file.name.replace(/\.[^.]+$/,'');
+  const preview=document.getElementById('upload-preview');
+  const area=document.getElementById('upload-area');
+
+  if(file.type==='application/pdf'){
+    showStatus('PDF 썸네일 생성 중...','');
+    const thumb=await getPdfThumbnail(file);
+    selectedFileThumbnail=thumb;
+    preview.innerHTML=buildPreviewHtml(thumb,file.name,'PDF',file.size);
+    showStatus('','');
+  } else if(file.type.startsWith('image/')){
+    const reader=new FileReader();
+    reader.onload=(e)=>{
+      selectedFileThumbnail=e.target.result;
+      const ext=file.type.split('/')[1].toUpperCase();
+      preview.innerHTML=buildPreviewHtml(e.target.result,file.name,ext,file.size);
+    };
+    reader.readAsDataURL(file);
+  }
+  area.style.display='none';
+  preview.style.display='flex';
+}
+
+function buildPreviewHtml(src,name,type,size){
+  return `<div class="upload-preview">
+    <img src="${src}" class="preview-thumb">
+    <div class="preview-info">
+      <div class="preview-name">${escHtml(name)}</div>
+      <div class="preview-size">${type} · ${formatSize(size)}</div>
+    </div>
+    <button class="btn btn-sm" onclick="resetFileSelect()">✕</button>
+  </div>`;
+}
+
+function resetFileSelect(){
+  selectedFile=null; selectedFileThumbnail=null;
+  document.getElementById('upload-area').style.display='flex';
+  document.getElementById('upload-preview').style.display='none';
+  document.getElementById('file-input').value='';
+}
+
+async function getPdfThumbnail(file){
+  const buf=await file.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  const page=await pdf.getPage(1);
+  const vp0=page.getViewport({scale:1});
+  const scale=300/vp0.width;
+  const vp=page.getViewport({scale});
+  const canvas=document.createElement('canvas');
+  canvas.width=vp.width; canvas.height=vp.height;
+  await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+  return canvas.toDataURL('image/jpeg',0.85);
+}
+
+async function uploadFile(){
+  if(!selectedFile){showStatus('파일을 선택하세요.','error');return;}
+  if(!folderId){showStatus('드라이브 폴더가 설정되지 않았습니다.','error');return;}
+  const title=document.getElementById('upload-title').value.trim()||selectedFile.name;
+  const desc=document.getElementById('upload-desc').value.trim();
+  const btn=document.getElementById('upload-btn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> 업로드 중...';
+  try{
+    const uploaded=await uploadToDrive(selectedFile.name,selectedFile.type,selectedFile,folderId);
+    const entry={
+      id:uploaded.id,name:selectedFile.name,title,description:desc,
+      tags:pendingTags,mimeType:selectedFile.type,
+      thumbnailBase64:selectedFileThumbnail||null,
+      uploadedAt:new Date().toISOString()
+    };
+    db.files.unshift(entry);
+    await saveDb();
+    closeModal('upload-modal');
+    renderFiles(db.files);
+    showStatus('업로드 완료!','success');
+  }catch(e){ showStatus('업로드 실패: '+e.message,'error'); }
+  finally{ btn.disabled=false; btn.innerHTML='업로드'; }
+}
+
+// ── TAGS
+function handleTagInput(e){
+  if(e.key==='Enter'||e.key===','){
+    e.preventDefault();
+    const val=e.target.value.replace(/^#/,'').trim();
+    if(!val)return;
+    const color=document.getElementById('tag-color-picker').value;
+    pendingTags.push({name:val,color});
+    e.target.value='';
+    renderPendingTags();
+  }
+}
+
+function renderPendingTags(){
+  document.getElementById('tags-display').innerHTML=pendingTags.map((t,i)=>`
+    <span class="tag-item" style="background:${t.color}22;color:${t.color};border:1px solid ${t.color}44;">
+      #${escHtml(t.name)}<button class="tag-remove" onclick="removeTag(${i})">×</button>
+    </span>`).join('');
+}
+
+function removeTag(i){ pendingTags.splice(i,1); renderPendingTags(); }
+
+// ── SEARCH/FILTER
+function handleSearch(){ renderFiles(db.files); }
+function setFilter(type,el){
+  currentFilter=type;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  renderFiles(db.files);
+}
+function setSearchFilter(type,el){
+  searchFilter=type;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderFiles(db.files);
+}
+
+// ── DETAIL
+function openDetail(fileId){
+  const f=db.files.find(f=>f.id===fileId);
+  if(!f)return;
+  currentDetailFile=f;
+  document.getElementById('detail-title').textContent=f.title||f.name;
+  document.getElementById('detail-desc').textContent=f.description||'설명 없음';
+  document.getElementById('detail-type').textContent=f.mimeType==='application/pdf'?'PDF 문서':'이미지';
+  document.getElementById('detail-date').textContent=f.uploadedAt?new Date(f.uploadedAt).toLocaleDateString('ko-KR'):'-';
+  const thumb=document.getElementById('detail-thumb');
+  if(f.thumbnailBase64){ thumb.src=f.thumbnailBase64; thumb.style.display='block'; }
+  else { thumb.style.display='none'; }
+  document.getElementById('detail-tags').innerHTML=(f.tags||[]).map(t=>{
+    const bg=t.color||'#c8f04a';
+    return `<span class="tag-pill" style="background:${bg}22;color:${bg};border-color:${bg}44;">#${t.name}</span>`;
+  }).join('');
+  openModal('detail-modal');
+}
+
+function openFile(){ if(currentDetailFile) window.open(`https://drive.google.com/file/d/${currentDetailFile.id}/view`,'_blank'); }
+function downloadFile(){ if(currentDetailFile) window.open(`https://drive.google.com/uc?export=download&id=${currentDetailFile.id}`,'_blank'); }
+
+// ── MODAL
+function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',(e)=>{ if(e.target===m) m.classList.add('hidden'); });
+});
+
+// ── STATUS
+let statusTimer;
+function showStatus(msg,type){
+  const el=document.getElementById('status-bar');
+  if(!msg){ el.classList.remove('show'); return; }
+  el.textContent=msg;
+  el.className='show '+(type||'');
+  clearTimeout(statusTimer);
+  if(type==='success'||type==='error') statusTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+// ── UTILS
+function formatSize(b){ if(b<1024)return b+'B'; if(b<1048576)return (b/1024).toFixed(1)+'KB'; return (b/1048576).toFixed(1)+'MB'; }
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── INIT
+(function(){
+  // Load GSI script eagerly
+  const s=document.createElement('script');
+  s.src='https://accounts.google.com/gsi/client';
+  document.head.appendChild(s);
+
+  // Drag and drop
+  window.addEventListener('DOMContentLoaded',()=>{
+    const area=document.getElementById('upload-area');
+    if(!area)return;
+    area.addEventListener('dragover',(e)=>{ e.preventDefault(); area.classList.add('drag-over'); });
+    area.addEventListener('dragleave',()=>area.classList.remove('drag-over'));
+    area.addEventListener('drop',(e)=>{
+      e.preventDefault(); area.classList.remove('drag-over');
+      const file=e.dataTransfer.files[0];
+      if(file){ handleFileSelect({target:{files:[file]}}); }
+    });
+  });
+})();
+</script>
+</body>
+</html>
