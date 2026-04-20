@@ -21,7 +21,6 @@
   body{background:var(--bg);color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:14px;min-height:100vh;}
   #app{display:flex;height:100vh;overflow:hidden;}
 
-  /* SIDEBAR */
   #sidebar{width:248px;min-width:248px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;box-shadow:2px 0 12px rgba(0,0,0,0.04);}
   .sidebar-logo{padding:24px 22px 18px;border-bottom:1px solid var(--border);}
   .sidebar-logo h1{font-family:'Nunito',sans-serif;font-size:20px;font-weight:700;color:var(--accent);}
@@ -38,7 +37,6 @@
   .nav-icon{font-size:16px;width:20px;text-align:center;}
   .sidebar-bottom{padding:16px 22px;border-top:1px solid var(--border);}
 
-  /* BUTTONS */
   .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
   .btn:hover{background:var(--surface2);}
   .btn:active{transform:scale(.98);}
@@ -51,7 +49,6 @@
   .btn-sm{padding:6px 12px;font-size:12px;}
   .btn-full{width:100%;justify-content:center;}
 
-  /* HEADER */
   #main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
   #header{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--surface);position:sticky;top:0;z-index:10;}
   #search-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:14px;outline:none;transition:all .15s;}
@@ -63,7 +60,6 @@
   .filter-chip.active{background:var(--accent-light);color:var(--accent);border-color:var(--accent);}
   .tab-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:700;color:var(--text);white-space:nowrap;}
 
-  /* FILES GRID */
   #files-container{padding:24px 28px;flex:1;}
   .files-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
   .files-count{font-size:12px;font-weight:600;color:var(--text3);}
@@ -86,7 +82,7 @@
   .empty-state .ico{font-size:52px;margin-bottom:16px;opacity:.5;}
   .empty-state p{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:6px;}
 
-  /* MODAL */
+  /* MODAL - 바깥 클릭으로 닫히지 않도록 pointer-events:none 제거, overlay에 클릭 이벤트 없음 */
   .modal-overlay{position:fixed;inset:0;background:rgba(20,24,60,0.35);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
   .modal-overlay.hidden{display:none;}
   .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:28px;box-shadow:var(--shadow-md);}
@@ -100,20 +96,15 @@
   .form-input:focus,.form-textarea:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-light);}
   .form-textarea{resize:vertical;min-height:76px;line-height:1.6;}
 
-  /* TAG BUILDER */
-  .tag-builder{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;min-height:44px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;cursor:text;transition:all .15s;}
-  .tag-builder:focus-within{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-light);}
-  .tag-builder-input{background:transparent;border:none;outline:none;color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:13px;min-width:100px;flex:1;}
-  .tag-builder-input::placeholder{color:var(--text3);}
-  .tag-item{display:flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;}
-  .tag-remove{background:none;border:none;color:inherit;cursor:pointer;font-size:15px;line-height:1;opacity:.6;padding:0;}
-  .tag-remove:hover{opacity:1;}
-  .color-swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-  .color-swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;}
-  .color-swatch:hover{transform:scale(1.15);}
-  .color-swatch.selected{border-color:#1A1D2E;}
+  /* TAG INPUT - 단순 텍스트 입력 */
+  .tag-input-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 13px;transition:all .15s;}
+  .tag-input-wrap:focus-within{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-light);}
+  .tag-raw-input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:14px;}
+  .tag-raw-input::placeholder{color:var(--text3);}
+  .tag-preview{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;min-height:0;}
+  .tag-preview:empty{display:none;}
+  .tag-pill-preview{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid transparent;}
 
-  /* UPLOAD AREA */
   .upload-area{border:2px dashed var(--border2);border-radius:var(--radius);padding:28px;text-align:center;cursor:pointer;transition:all .15s;color:var(--text3);position:relative;display:flex;flex-direction:column;align-items:center;background:var(--surface2);}
   .upload-area:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
   .upload-area.drag-over{border-color:var(--accent);background:var(--accent-light);}
@@ -125,35 +116,29 @@
   .preview-name{font-size:13px;font-weight:700;}
   .preview-size{font-size:11px;color:var(--text3);margin-top:2px;}
 
-  /* AUTH */
   #auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#EEF0FE 0%,#F7F8FC 60%,#FFF0F8 100%);padding:20px;}
   .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:44px;width:100%;max-width:400px;box-shadow:var(--shadow-md);text-align:center;}
   .auth-logo{font-size:40px;margin-bottom:16px;}
   .auth-card h1{font-family:'Nunito',sans-serif;font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px;}
   .auth-card p{color:var(--text2);font-size:13px;margin-bottom:28px;line-height:1.7;}
 
-  /* CONFIRM DIALOG */
   .confirm-modal{max-width:400px;}
   .confirm-msg{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:24px;}
   .confirm-msg strong{color:var(--danger);}
 
-  /* DETAIL MODAL */
   .detail-modal{max-width:640px;}
   .detail-thumb{width:100%;max-height:320px;object-fit:contain;border-radius:var(--radius);background:var(--surface2);margin-bottom:20px;}
   .detail-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
   .detail-meta-item label{font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;}
   .detail-meta-item span{font-size:13px;color:var(--text2);}
 
-  /* YOUTUBE EMBED */
   .yt-embed-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:var(--radius);margin-bottom:16px;background:#000;}
   .yt-embed-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:var(--radius);}
   .yt-link-row{display:flex;align-items:center;gap:8px;background:#FFF3F3;border:1px solid #FFD0D0;border-radius:var(--radius);padding:10px 14px;margin-bottom:16px;}
-  .yt-link-row span{font-size:20px;}
   .yt-link-row a{font-size:13px;color:var(--danger);font-weight:600;text-decoration:none;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .yt-link-row a:hover{text-decoration:underline;}
 
-  /* STATUS */
-  #status-bar{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;font-size:13px;font-weight:600;z-index:200;max-width:300px;display:none;box-shadow:var(--shadow-md);}
+  #status-bar{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;font-size:13px;font-weight:600;z-index:200;max-width:320px;display:none;box-shadow:var(--shadow-md);}
   #status-bar.show{display:block;}
   #status-bar.error{border-color:var(--danger);color:var(--danger);background:#FFF8F9;}
   #status-bar.success{border-color:var(--success);color:var(--success);background:#F0FDF8;}
@@ -167,7 +152,6 @@
 </head>
 <body>
 
-<!-- AUTH -->
 <div id="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">📁</div>
@@ -177,7 +161,6 @@
   </div>
 </div>
 
-<!-- APP -->
 <div id="app" style="display:none;">
   <div id="sidebar">
     <div class="sidebar-logo">
@@ -234,6 +217,7 @@
     <div class="form-group">
       <label class="form-label">Google Drive 폴더 URL</label>
       <input id="folder-url-input" class="form-input" placeholder="https://drive.google.com/drive/folders/..." type="text">
+      <p style="font-size:11px;color:var(--text3);margin-top:6px;">이 폴더 안에 콘티/악보 하위 폴더가 자동으로 생성됩니다.</p>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;">
       <button class="btn" onclick="closeModal('drive-setting-modal')">취소</button>
@@ -280,12 +264,11 @@
       <input id="upload-youtube" class="form-input" placeholder="https://www.youtube.com/watch?v=...">
     </div>
     <div class="form-group">
-      <label class="form-label">해시태그 <span style="color:var(--text3);font-weight:400;">(입력 후 Enter)</span></label>
-      <div class="tag-builder" onclick="document.getElementById('tag-input').focus()">
-        <span id="tags-display"></span>
-        <input id="tag-input" class="tag-builder-input" placeholder="#태그 입력" onkeydown="handleTagInput(event)">
+      <label class="form-label">해시태그 <span style="color:var(--text3);font-weight:400;">(#으로 구분, 예: #브라스 #2절 #빠름)</span></label>
+      <div class="tag-input-wrap">
+        <input id="upload-tag-raw" class="tag-raw-input" placeholder="#태그1 #태그2 #태그3" oninput="previewTags('upload')">
       </div>
-      <div class="color-swatches" id="upload-swatches"></div>
+      <div class="tag-preview" id="upload-tag-preview"></div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;">
       <button class="btn" onclick="closeModal('upload-modal')">취소</button>
@@ -322,12 +305,11 @@
       <input id="edit-youtube" class="form-input" placeholder="https://www.youtube.com/watch?v=...">
     </div>
     <div class="form-group">
-      <label class="form-label">해시태그 <span style="color:var(--text3);font-weight:400;">(입력 후 Enter)</span></label>
-      <div class="tag-builder" onclick="document.getElementById('edit-tag-input').focus()">
-        <span id="edit-tags-display"></span>
-        <input id="edit-tag-input" class="tag-builder-input" placeholder="#태그 입력" onkeydown="handleEditTagInput(event)">
+      <label class="form-label">해시태그 <span style="color:var(--text3);font-weight:400;">(#으로 구분)</span></label>
+      <div class="tag-input-wrap">
+        <input id="edit-tag-raw" class="tag-raw-input" placeholder="#태그1 #태그2 #태그3" oninput="previewTags('edit')">
       </div>
-      <div class="color-swatches" id="edit-swatches"></div>
+      <div class="tag-preview" id="edit-tag-preview"></div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;">
       <button class="btn btn-danger btn-sm" onclick="confirmDelete()" style="margin-right:auto;">🗑 삭제</button>
@@ -373,7 +355,7 @@
       <div class="detail-meta-item"><label>업로드 날짜</label><span id="detail-date"></span></div>
     </div>
     <div style="display:flex;gap:8px;margin-top:20px;">
-      <button class="btn" onclick="openEditFromDetail()" style="gap:6px;">✏️ 수정</button>
+      <button class="btn" onclick="openEditFromDetail()">✏️ 수정</button>
       <button class="btn" onclick="openFile()" style="flex:1;">↗ Drive에서 열기</button>
       <button class="btn btn-accent" onclick="downloadFile()" style="flex:1;">⬇ 다운로드</button>
     </div>
@@ -386,22 +368,16 @@ const SCOPES='https://www.googleapis.com/auth/drive';
 const DB_FILENAME='drive-manager-db.json';
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-const TAG_COLORS=[
-  {name:'코랄 핑크',hex:'#FF7F50'},{name:'선샤인 옐로우',hex:'#FFD700'},
-  {name:'에메랄드 그린',hex:'#50C878'},{name:'로얄 블루',hex:'#4169E1'},
-  {name:'바이올렛',hex:'#8A2BE2'},{name:'아쿠아 마린',hex:'#7FFFD4'},
-  {name:'라임 펀치',hex:'#C0FF00'},{name:'스카이 블루',hex:'#87CEEB'},
-  {name:'마젠타',hex:'#FF00FF'},{name:'탠저린',hex:'#FFA500'},
-  {name:'오키드',hex:'#DA70D6'},{name:'민트',hex:'#98FB98'},
-];
+// 12가지 태그 색상 순서대로 순환
+const TAG_COLORS=['#FF7F50','#FFD700','#50C878','#4169E1','#8A2BE2','#7FFFD4','#C0FF00','#87CEEB','#FF00FF','#FFA500','#DA70D6','#98FB98'];
 
 const CAT_LABELS={all:'전체 파일',conti:'콘티',score:'악보'};
 const CAT_ICONS={all:'📁',conti:'🎬',score:'🎵'};
+// 카테고리별 Drive 폴더 ID 캐시
+const folderIdCache={conti:null,score:null};
 
 let tokenClient=null, accessToken=null, folderId=null, dbFileId=null;
 let db={files:[]};
-let uploadTags=[], editTags=[];
-let selectedUploadColor=TAG_COLORS[0].hex, selectedEditColor=TAG_COLORS[0].hex;
 let selectedFile=null, selectedFileThumbnail=null;
 let searchFilter='all', currentCategory='all';
 let currentDetailFile=null, editingFileId=null;
@@ -410,7 +386,28 @@ let currentDetailFile=null, editingFileId=null;
 function saveLocal(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 function loadLocal(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}}
 
-// ── AUTH (토큰 캐싱으로 새로고침 시 재로그인 방지)
+// ── TAG PARSING: "#브라스 #2절 #빠름" → [{name,color}, ...]
+function parseTags(raw){
+  if(!raw||!raw.trim())return[];
+  const parts=raw.split('#').map(s=>s.trim()).filter(Boolean);
+  return parts.map((name,i)=>({name, color:TAG_COLORS[i%TAG_COLORS.length]}));
+}
+
+function tagsToRaw(tags){
+  if(!tags||!tags.length)return'';
+  return tags.map(t=>'#'+t.name).join(' ');
+}
+
+function previewTags(prefix){
+  const raw=document.getElementById(prefix+'-tag-raw').value;
+  const tags=parseTags(raw);
+  const el=document.getElementById(prefix+'-tag-preview');
+  el.innerHTML=tags.map(t=>`
+    <span class="tag-pill-preview" style="background:${t.color}22;color:${darken(t.color)};border:1px solid ${t.color}55;">#${escHtml(t.name)}</span>
+  `).join('');
+}
+
+// ── AUTH
 function initGoogleAuth(){
   if(!window.google){
     const s=document.createElement('script');
@@ -426,16 +423,14 @@ function setupAuth(){
     callback:(resp)=>{
       if(resp.error){showStatus('로그인 실패: '+resp.error,'error');return;}
       accessToken=resp.access_token;
-      // 만료 시각 저장 (55분)
-      saveLocal('tokenExpiry', Date.now()+55*60*1000);
-      saveLocal('accessToken', resp.access_token);
+      saveLocal('tokenExpiry',Date.now()+55*60*1000);
+      saveLocal('accessToken',resp.access_token);
       onAuthSuccess();
     }
   });
-  // 저장된 토큰이 아직 유효하면 바로 사용
   const savedToken=loadLocal('accessToken');
   const expiry=loadLocal('tokenExpiry');
-  if(savedToken && expiry && Date.now()<expiry){
+  if(savedToken&&expiry&&Date.now()<expiry){
     accessToken=savedToken;
     onAuthSuccess();
   } else {
@@ -473,6 +468,9 @@ function saveDriveSetting(){
   folderId=match[1];
   saveLocal('folderId',folderId);
   saveLocal('folderUrl',url);
+  // 하위 폴더 캐시 초기화
+  folderIdCache.conti=null; folderIdCache.score=null;
+  saveLocal('folderIdCache',null);
   updateFolderDisplay();
   closeModal('drive-setting-modal');
   dbFileId=null; db={files:[]};
@@ -517,7 +515,38 @@ async function deleteDriveFile(fileId){
   });
 }
 
-// ── DB
+// ── 카테고리 폴더 관리 (콘티/악보 폴더 자동 생성)
+async function getCategoryFolderId(cat){
+  if(cat==='all')return folderId;
+  if(folderIdCache[cat])return folderIdCache[cat];
+
+  // 캐시에서 복원
+  const cached=loadLocal('folderIdCache')||{};
+  if(cached[cat]){folderIdCache[cat]=cached[cat];return cached[cat];}
+
+  const folderName=cat==='conti'?'콘티':'악보';
+  // 기존 폴더 검색
+  const q=`name='${folderName}' and '${folderId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`;
+  const res=await driveApi(`files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
+  if(res.files&&res.files.length>0){
+    folderIdCache[cat]=res.files[0].id;
+  } else {
+    // 폴더 생성
+    const createRes=await driveApi('files',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:folderName,mimeType:'application/vnd.google-apps.folder',parents:[folderId]})
+    });
+    folderIdCache[cat]=createRes.id;
+  }
+  // 로컬 캐시 저장
+  const newCache=loadLocal('folderIdCache')||{};
+  newCache[cat]=folderIdCache[cat];
+  saveLocal('folderIdCache',newCache);
+  return folderIdCache[cat];
+}
+
+// ── DB (루트 폴더에 저장)
 async function loadDb(){
   if(!folderId)return;
   try{
@@ -548,7 +577,7 @@ async function loadFiles(){
 }
 
 // ── CATEGORY
-function setCategory(cat, el){
+function setCategory(cat,el){
   currentCategory=cat;
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   el.classList.add('active');
@@ -561,13 +590,9 @@ function renderFiles(files){
   const grid=document.getElementById('files-grid');
   const count=document.getElementById('files-count');
   let filtered=[...files];
-
-  // 카테고리 필터
   if(currentCategory!=='all'){
     filtered=filtered.filter(f=>f.category===currentCategory);
   }
-
-  // 검색
   const q=document.getElementById('search-input').value.trim().toLowerCase();
   if(q){
     filtered=filtered.filter(f=>{
@@ -580,7 +605,6 @@ function renderFiles(files){
       if(searchFilter==='desc')return inD;
     });
   }
-
   count.textContent=`${filtered.length}개 파일`;
   if(filtered.length===0){
     grid.innerHTML=`<div class="empty-state">
@@ -590,12 +614,11 @@ function renderFiles(files){
     </div>`;
     return;
   }
-
   grid.innerHTML=filtered.map(f=>{
     const typeLabel=f.mimeType==='application/pdf'?'PDF':(f.mimeType||'').split('/')[1]?.toUpperCase()||'FILE';
     const tags=(f.tags||[]).map(t=>{
-      const bg=t.color||'#5B6EF5';
-      return `<span class="tag-pill" style="background:${bg}22;color:${darken(bg)};border-color:${bg}55;">#${t.name}</span>`;
+      const bg=t.color||TAG_COLORS[0];
+      return `<span class="tag-pill" style="background:${bg}22;color:${darken(bg)};border-color:${bg}55;">#${escHtml(t.name)}</span>`;
     }).join('');
     const thumbHtml=f.thumbnailBase64
       ?`<img src="${f.thumbnailBase64}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">`
@@ -615,17 +638,16 @@ function renderFiles(files){
 // ── UPLOAD
 function openUploadModal(){
   if(!folderId){showStatus('먼저 드라이브 폴더를 설정하세요.','error');openDriveSettingModal();return;}
-  selectedFile=null;selectedFileThumbnail=null;uploadTags=[];selectedUploadColor=TAG_COLORS[0].hex;
+  selectedFile=null;selectedFileThumbnail=null;
   document.getElementById('upload-title').value='';
   document.getElementById('upload-desc').value='';
   document.getElementById('upload-youtube').value='';
-  document.getElementById('upload-category').value='all';
-  document.getElementById('tag-input').value='';
-  document.getElementById('tags-display').innerHTML='';
+  document.getElementById('upload-category').value=currentCategory==='all'?'all':currentCategory;
+  document.getElementById('upload-tag-raw').value='';
+  document.getElementById('upload-tag-preview').innerHTML='';
   document.getElementById('upload-area').style.display='flex';
   document.getElementById('upload-preview').style.display='none';
   document.getElementById('file-input').value='';
-  renderSwatches('upload-swatches',TAG_COLORS,selectedUploadColor,(c)=>{selectedUploadColor=c;});
   openModal('upload-modal');
 }
 
@@ -687,13 +709,16 @@ async function uploadFile(){
   const desc=document.getElementById('upload-desc').value.trim();
   const ytUrl=document.getElementById('upload-youtube').value.trim();
   const category=document.getElementById('upload-category').value;
+  const tags=parseTags(document.getElementById('upload-tag-raw').value);
   const btn=document.getElementById('upload-btn');
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span> 업로드 중...';
   try{
-    const uploaded=await uploadToDrive(selectedFile.name,selectedFile.type,selectedFile,folderId);
+    // 카테고리 폴더에 파일 업로드
+    const targetFolderId=await getCategoryFolderId(category);
+    const uploaded=await uploadToDrive(selectedFile.name,selectedFile.type,selectedFile,targetFolderId);
     db.files.unshift({
       id:uploaded.id,name:selectedFile.name,title,description:desc,
-      tags:uploadTags,mimeType:selectedFile.type,category,
+      tags,mimeType:selectedFile.type,category,
       youtubeUrl:ytUrl||null,
       thumbnailBase64:selectedFileThumbnail||null,
       uploadedAt:new Date().toISOString()
@@ -704,68 +729,6 @@ async function uploadFile(){
     showStatus('업로드 완료!','success');
   }catch(e){showStatus('업로드 실패: '+e.message,'error');}
   finally{btn.disabled=false;btn.innerHTML='업로드';}
-}
-
-// ── TAGS
-function handleTagInput(e){
-  if(e.key==='Enter'||e.key===','){
-    e.preventDefault();
-    const val=e.target.value.replace(/^#/,'').trim();
-    if(!val)return;
-    uploadTags.push({name:val,color:selectedUploadColor});
-    e.target.value='';
-    renderUploadTags();
-  }
-}
-function renderUploadTags(){
-  document.getElementById('tags-display').innerHTML=uploadTags.map((t,i)=>`
-    <span class="tag-item" style="background:${t.color}22;color:${darken(t.color)};border:1px solid ${t.color}55;">
-      #${escHtml(t.name)}<button class="tag-remove" onclick="removeUploadTag(${i})">×</button>
-    </span>`).join('');
-}
-function removeUploadTag(i){uploadTags.splice(i,1);renderUploadTags();}
-
-function handleEditTagInput(e){
-  if(e.key==='Enter'||e.key===','){
-    e.preventDefault();
-    const val=e.target.value.replace(/^#/,'').trim();
-    if(!val)return;
-    editTags.push({name:val,color:selectedEditColor});
-    e.target.value='';
-    renderEditTags();
-  }
-}
-function renderEditTags(){
-  document.getElementById('edit-tags-display').innerHTML=editTags.map((t,i)=>`
-    <span class="tag-item" style="background:${t.color}22;color:${darken(t.color)};border:1px solid ${t.color}55;">
-      #${escHtml(t.name)}<button class="tag-remove" onclick="removeEditTag(${i})">×</button>
-    </span>`).join('');
-}
-function removeEditTag(i){editTags.splice(i,1);renderEditTags();}
-
-// ── SWATCHES
-function renderSwatches(containerId,colors,selectedColor,onSelect){
-  const el=document.getElementById(containerId);
-  el.innerHTML=colors.map(c=>`
-    <div class="color-swatch ${c.hex===selectedColor?'selected':''}"
-      style="background:${c.hex};" title="${c.name}"
-      onclick="selectSwatch('${containerId}','${c.hex}')"></div>`).join('');
-  el._onSelect=onSelect;
-}
-function selectSwatch(containerId,hex){
-  const el=document.getElementById(containerId);
-  el.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));
-  el.querySelectorAll('.color-swatch').forEach(s=>{if(s.style.background===hex||s.style.backgroundColor===hex)s.classList.add('selected');});
-  if(el._onSelect)el._onSelect(hex);
-  if(containerId==='upload-swatches')selectedUploadColor=hex;
-  if(containerId==='edit-swatches')selectedEditColor=hex;
-}
-
-// ── YOUTUBE
-function extractYtId(url){
-  if(!url)return null;
-  const m=url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
-  return m?m[1]:null;
 }
 
 // ── DETAIL
@@ -779,7 +742,6 @@ function openDetail(fileId){
   document.getElementById('detail-date').textContent=f.uploadedAt?new Date(f.uploadedAt).toLocaleDateString('ko-KR'):'-';
   document.getElementById('detail-category').textContent=CAT_LABELS[f.category||'all'];
 
-  // YouTube
   const ytWrap=document.getElementById('detail-youtube-wrap');
   const ytId=extractYtId(f.youtubeUrl);
   if(ytId){
@@ -787,21 +749,18 @@ function openDetail(fileId){
       <iframe src="https://www.youtube.com/embed/${ytId}" allowfullscreen allow="autoplay; encrypted-media"></iframe>
     </div>`;
   } else if(f.youtubeUrl){
-    ytWrap.innerHTML=`<div class="yt-link-row">
-      <span>🎵</span>
+    ytWrap.innerHTML=`<div class="yt-link-row"><span>🎵</span>
       <a href="${escHtml(f.youtubeUrl)}" target="_blank">${escHtml(f.youtubeUrl)}</a>
     </div>`;
-  } else {
-    ytWrap.innerHTML='';
-  }
+  } else { ytWrap.innerHTML=''; }
 
   const thumb=document.getElementById('detail-thumb');
   if(f.thumbnailBase64){thumb.src=f.thumbnailBase64;thumb.style.display='block';}
   else{thumb.style.display='none';}
 
   document.getElementById('detail-tags').innerHTML=(f.tags||[]).map(t=>{
-    const bg=t.color||'#5B6EF5';
-    return `<span class="tag-pill" style="background:${bg}22;color:${darken(bg)};border-color:${bg}55;">#${t.name}</span>`;
+    const bg=t.color||TAG_COLORS[0];
+    return `<span class="tag-pill" style="background:${bg}22;color:${darken(bg)};border-color:${bg}55;">#${escHtml(t.name)}</span>`;
   }).join('');
 
   openModal('detail-modal');
@@ -821,15 +780,13 @@ function openEditModal(fileId){
   const f=db.files.find(f=>f.id===fileId);
   if(!f)return;
   editingFileId=fileId;
-  editTags=[...(f.tags||[]).map(t=>({...t}))];
-  selectedEditColor=TAG_COLORS[0].hex;
   document.getElementById('edit-title').value=f.title||'';
   document.getElementById('edit-desc').value=f.description||'';
   document.getElementById('edit-youtube').value=f.youtubeUrl||'';
   document.getElementById('edit-category').value=f.category||'all';
-  document.getElementById('edit-tag-input').value='';
-  renderEditTags();
-  renderSwatches('edit-swatches',TAG_COLORS,selectedEditColor,(c)=>{selectedEditColor=c;});
+  const rawTags=tagsToRaw(f.tags||[]);
+  document.getElementById('edit-tag-raw').value=rawTags;
+  previewTags('edit');
   openModal('edit-modal');
 }
 
@@ -839,11 +796,21 @@ async function saveEdit(){
   try{
     const idx=db.files.findIndex(f=>f.id===editingFileId);
     if(idx===-1)throw new Error('파일을 찾을 수 없습니다.');
+    const newCategory=document.getElementById('edit-category').value;
+    const oldCategory=db.files[idx].category||'all';
+
+    // 카테고리가 변경되면 Drive에서 파일 이동
+    if(newCategory!==oldCategory){
+      const newParentId=await getCategoryFolderId(newCategory);
+      const oldParentId=await getCategoryFolderId(oldCategory);
+      await driveApi(`files/${editingFileId}?addParents=${newParentId}&removeParents=${oldParentId}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
+    }
+
     db.files[idx].title=document.getElementById('edit-title').value.trim()||db.files[idx].name;
     db.files[idx].description=document.getElementById('edit-desc').value.trim();
     db.files[idx].youtubeUrl=document.getElementById('edit-youtube').value.trim()||null;
-    db.files[idx].category=document.getElementById('edit-category').value;
-    db.files[idx].tags=editTags;
+    db.files[idx].category=newCategory;
+    db.files[idx].tags=parseTags(document.getElementById('edit-tag-raw').value);
     await saveDb();
     closeModal('edit-modal');
     renderFiles(db.files);
@@ -879,12 +846,9 @@ function setSearchFilter(type,el){
   renderFiles(db.files);
 }
 
-// ── MODAL
+// ── MODAL (바깥 클릭으로 닫히지 않음 - 클릭 이벤트 제거)
 function openModal(id){document.getElementById(id).classList.remove('hidden');}
 function closeModal(id){document.getElementById(id).classList.add('hidden');}
-document.querySelectorAll('.modal-overlay').forEach(m=>{
-  m.addEventListener('click',(e)=>{if(e.target===m)m.classList.add('hidden');});
-});
 
 // ── STATUS
 let statusTimer;
@@ -897,6 +861,7 @@ function showStatus(msg,type){
 }
 
 // ── UTILS
+function extractYtId(url){if(!url)return null;const m=url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);return m?m[1]:null;}
 function formatSize(b){if(b<1024)return b+'B';if(b<1048576)return (b/1024).toFixed(1)+'KB';return (b/1048576).toFixed(1)+'MB';}
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function darken(hex){
@@ -910,7 +875,6 @@ function darken(hex){
   const s=document.createElement('script');
   s.src='https://accounts.google.com/gsi/client';
   s.onload=()=>{
-    // 저장된 토큰 유효하면 자동 로그인
     const savedToken=loadLocal('accessToken');
     const expiry=loadLocal('tokenExpiry');
     if(savedToken&&expiry&&Date.now()<expiry){
